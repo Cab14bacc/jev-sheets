@@ -1,0 +1,21 @@
+{
+  "name": "jev-sheets",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Google Sheets custom functions (JEV_IF, JEV_PROB, JEV_CHOICE, JEV_SCORE) backed by TypeSafe's Jev model.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json",
+    "push": "npm run build && clasp push",
+    "try": "node scripts/try.mjs"
+  },
+  "devDependencies": {
+    "@types/google-apps-script": "^2.0.13",
+    "esbuild": "^0.28.2",
+    "typescript": "^5.9.0",
+    "vitest": "^5.0.1"
+  }
+}

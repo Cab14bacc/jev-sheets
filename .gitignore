@@ -1,0 +1,7 @@
+node_modules/
+dist/
+*.log
+.env
+# Holds your Apps Script project ID; copy from .clasp.json.example
+.clasp.json
+.clasprc.json
