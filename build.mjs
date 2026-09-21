@@ -18,4 +18,5 @@ await build({
 
 copyFileSync("gs/functions.js", "dist/functions.js");
 copyFileSync("gs/appsscript.json", "dist/appsscript.json");
-console.log("Built dist/: jev.js, functions.js, appsscript.json");
+copyFileSync("gs/Sidebar.html", "dist/Sidebar.html");
+console.log("Built dist/: jev.js, functions.js, Sidebar.html, appsscript.json");

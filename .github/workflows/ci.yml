@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+
+permissions:
+  contents: write # to attach build files to releases
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+      # On a version tag, publish dist/ so manual installers don't need Node.
+      - name: Package build
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: cd dist && zip -r ../jev-sheets-${{ github.ref_name }}.zip .
+      - name: Create release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >
+          gh release create "${{ github.ref_name }}"
+          jev-sheets-${{ github.ref_name }}.zip dist/jev.js dist/functions.js dist/Sidebar.html dist/appsscript.json
+          --title "${{ github.ref_name }}" --generate-notes

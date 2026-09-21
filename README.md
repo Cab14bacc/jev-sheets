@@ -19,30 +19,65 @@ Ask typed questions about your spreadsheet cells with [TypeSafe](https://typesaf
 
 You need your own TypeSafe API key from [console.typesafe.ai](https://console.typesafe.ai/keys).
 
-## Install into a sheet
+## Install
 
-### Quick: copy and paste
+There are three ways to install, depending on who you are:
 
-1. `npm install && npm run build`
-2. In a Google Sheet, open **Extensions → Apps Script**.
-3. Under ⚙️ **Project Settings**, tick **Show "appsscript.json" manifest file in editor**. Replace that file's contents with `dist/appsscript.json`.
-4. Rename `Code.gs` to `functions.gs` and paste in `dist/functions.js`. Add a script named `jev` and paste in `dist/jev.js`. Save.
-5. Reload the sheet → **Jev → Set API key (just for me)** → **Jev → Test connection**. The first time, Google warns the script is unverified: choose **Advanced → Go to … → Allow**.
+| You are… | Use | Needs Node.js? |
+|---|---|---|
+| Anyone | **A. Google Workspace Marketplace** (coming soon) | No |
+| Anyone who wants it now | **B. Download a release and paste it in** | No |
+| A developer changing the code | **C. Build from source** | Yes |
 
-### With clasp
+### A. Google Workspace Marketplace
 
-1. Enable the Apps Script API at <https://script.google.com/home/usersettings> (one time).
-2. Run:
-   ```sh
-   npx @google/clasp login
-   cp .clasp.json.example .clasp.json   # paste your script ID from Project Settings
-   npm run push
-   ```
+*Listing pending review.* Once it's live: **Extensions → Add-ons → Get add-ons**, search "Jev for Sheets", click Install. Then follow [First run](#first-run).
+
+### B. Download a release (no Node.js needed)
+
+1. From the [latest release](https://github.com/Cab14bacc/jev-sheets/releases/latest), download `jev.js`, `functions.js`, `Sidebar.html` and `appsscript.json`.
+2. Open a Google Sheet → **Extensions → Apps Script**, then do [Paste the files in](#paste-the-files-in) below.
+
+### C. Build from source
+
+Always start with:
+
+```sh
+npm install      # installs the build tools, including clasp
+npm run build    # writes dist/: jev.js, functions.js, Sidebar.html, appsscript.json
+```
+
+Then upload `dist/` to Apps Script in **one** of two ways:
+
+- **By hand:** open a Google Sheet → **Extensions → Apps Script**, then do [Paste the files in](#paste-the-files-in) below.
+- **With clasp**, which uploads for you and is quicker if you'll push repeatedly:
+  1. One time: enable the Apps Script API at <https://script.google.com/home/usersettings>, then run `npx clasp login`.
+  2. Copy `.clasp.json.example` to `.clasp.json` and paste in your script ID (Apps Script → ⚙️ **Project Settings** → *Script ID*).
+  3. Run `npm run push`. This rebuilds and uploads `dist/`. Run it again after every change.
+
+### Paste the files in
+
+In the Apps Script editor:
+
+1. ⚙️ **Project Settings** → tick **Show "appsscript.json" manifest file in editor**. Back in the editor, replace the contents of `appsscript.json` with `appsscript.json`.
+2. Rename `Code.gs` to `functions.gs` and replace its contents with `functions.js`.
+3. **+ → Script**, name it `jev`, and paste in `jev.js`.
+4. **+ → HTML**, name it `Sidebar` (exactly), and paste in `Sidebar.html`.
+5. Save.
+
+### First run
+
+1. Reload the spreadsheet. A menu appears under **Extensions**. If you pasted the files by hand, the menu is named after your Apps Script project.
+2. Open **Settings & API key**. The first time, Google asks for permission. For a copy you pasted in yourself it warns "Google hasn't verified this app": choose **Advanced → Go to … (unsafe) → Allow**. It's your own script.
+3. Paste your TypeSafe API key and click **Save key**. It tests the connection automatically.
+4. Optional: **Insert example sheet** adds a tab with every formula already working.
 
 ### Where your key is stored
 
 - **"Just for me"** is stored in your Apps Script *user* properties, which other people can't see.
-- **"For this spreadsheet"** is stored in *document* properties. Anyone who can edit the sheet can open its script and read the key. Use it only in sheets you don't share.
+- **"Everyone using Jev in this spreadsheet"** is stored in *document* properties. Other people's formulas in that spreadsheet then use (and bill) your key. With a pasted-in copy, anyone who can edit the sheet can also open the script and read it. Use it only in sheets you trust.
+
+The sidebar never shows the full key, only its last 4 characters.
 
 Cell text is sent only to `api.typesafe.ai` (see TypeSafe's [privacy policy](https://typesafe.ai/legal/privacy-policy)). This project runs no server and collects nothing.
 
@@ -55,6 +90,10 @@ npm run build     # → dist/
 TYPESAFE_API_KEY=... npm run try   # live call against the real API
 ```
 
+- `src/examples.ts`: contents of the "Jev examples" tab.
+- `gs/Sidebar.html`: the settings sidebar (it talks to the `jevSidebar*` functions via `google.script.run`).
+- `docs/`: the GitHub Pages site (homepage, privacy policy, terms), which the Marketplace listing needs. `npm run assets` renders the listing icons and banner from `docs/icon.svg` into `assets/`.
+- Publishing to the Marketplace: see [PUBLISHING.md](PUBLISHING.md).
 - `src/functions.ts`: the formula logic. Apps Script services are injected through `SheetsEnv`, so it all runs in Node.
 - `src/index.ts`: the Apps Script glue (UrlFetchApp, CacheService, properties, menu). It is bundled into the global `JevSheets`.
 - `gs/functions.js`: the top-level functions Sheets discovers, with the `@customfunction` docs shown in autocomplete.

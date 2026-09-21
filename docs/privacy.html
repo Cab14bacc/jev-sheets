@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privacy Policy – Jev for Sheets</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <p><a href="./">← Jev for Sheets</a></p>
+    <h1>Privacy Policy</h1>
+    <p class="muted">Last updated: September 21, 2026</p>
+  </header>
+
+  <main>
+    <p>Jev for Sheets ("the add-on") is an open-source Google Sheets add-on. This policy explains what data the add-on accesses, where that data goes, and what it does not do. The add-on's source code is public at <a href="https://github.com/Cab14bacc/jev-sheets">github.com/Cab14bacc/jev-sheets</a>, so every statement below can be checked.</p>
+
+    <h2>Summary</h2>
+    <ul>
+      <li>The add-on reads only the cells you pass to a <code>JEV_</code> formula, plus the spreadsheet it's opened in when you use its menu.</li>
+      <li>It sends that cell text only to TypeSafe's API (<code>api.typesafe.ai</code>), using your own API key, to get the answer.</li>
+      <li>The developer has no server, receives none of your data, and runs no analytics or tracking.</li>
+    </ul>
+
+    <h2>Data the add-on accesses and why</h2>
+    <table>
+      <tr><th>Data</th><th>Why</th><th>Where it goes</th></tr>
+      <tr>
+        <td>Values of cells used as arguments to <code>JEV_IF</code>, <code>JEV_PROB</code>, <code>JEV_CHOICE</code> or <code>JEV_SCORE</code>, and the question and options you write in the formula</td>
+        <td>To get the answer the formula asks for</td>
+        <td>Sent over HTTPS to TypeSafe's API (<code>https://api.typesafe.ai/</code>). Nowhere else.</td>
+      </tr>
+      <tr>
+        <td>Your TypeSafe API key</td>
+        <td>To authenticate requests to TypeSafe on your behalf</td>
+        <td>Stored in Google Apps Script <em>user properties</em> (visible only to you), or in <em>document properties</em> if you choose to share it with everyone using the add-on in that spreadsheet. It is sent only to TypeSafe, as the request's authorization header.</td>
+      </tr>
+      <tr>
+        <td>The answers returned by TypeSafe</td>
+        <td>To avoid paying again when the sheet recalculates</td>
+        <td>Cached in Google Apps Script's cache service for up to 6 hours, then deleted automatically.</td>
+      </tr>
+      <tr>
+        <td>The current spreadsheet (when you choose <em>Insert example sheet</em>)</td>
+        <td>To add a new tab with example data and formulas</td>
+        <td>Stays in your spreadsheet.</td>
+      </tr>
+    </table>
+    <p>The add-on does not read other spreadsheets, your Google Drive, your email or your contacts, and does not access your name or email address.</p>
+
+    <h2>Google permissions requested</h2>
+    <ul>
+      <li><code>spreadsheets.currentonly</code>: view and manage only the spreadsheet in which the add-on is used (to insert the example sheet and show notifications).</li>
+      <li><code>script.container.ui</code>: display the settings sidebar and menu inside Google Sheets.</li>
+      <li><code>script.external_request</code>: connect to TypeSafe's API. The add-on's manifest only allows requests to <code>https://api.typesafe.ai/</code>.</li>
+    </ul>
+
+    <h2>Third party: TypeSafe AI</h2>
+    <p>Answers are produced by TypeSafe AI's Jev model. Cell text you send is processed by TypeSafe under their terms and <a href="https://typesafe.ai/legal/privacy-policy">privacy policy</a>; TypeSafe states that it does not train its models on customer requests. You create and control your TypeSafe account and API key, and TypeSafe bills you directly for usage. Don't pass cells containing data you aren't permitted to share with TypeSafe.</p>
+
+    <h2>Limited Use</h2>
+    <p>Jev for Sheets' use and transfer of information received from Google APIs adheres to the <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>, including the Limited Use requirements. Data from Google Sheets is used only to provide the add-on's user-facing features described above. It is not sold, not used for advertising, not used to train AI models, and not transferred to anyone except TypeSafe, as needed to answer your formulas.</p>
+
+    <h2>Retention and deletion</h2>
+    <ul>
+      <li>Cached answers expire automatically after at most 6 hours.</li>
+      <li>Remove your API key at any time in <strong>Extensions → Jev for Sheets → Settings &amp; API key</strong>. Uninstalling the add-on also stops all access.</li>
+      <li>For data TypeSafe holds, see TypeSafe's privacy policy or contact them.</li>
+    </ul>
+
+    <h2>Children</h2>
+    <p>The add-on is not directed at children under 13 and does not knowingly collect data from them.</p>
+
+    <h2>Changes</h2>
+    <p>If this policy changes, the new version will be posted on this page with a new "Last updated" date. The history of changes is visible in the project's GitHub repository.</p>
+
+    <h2>Contact</h2>
+    <p>Questions about privacy: <a href="https://github.com/Cab14bacc/jev-sheets/issues">open an issue on GitHub</a>.</p>
+  </main>
+
+  <footer>
+    <a href="./">Home</a>
+    <a href="terms.html">Terms</a>
+    <a href="https://github.com/Cab14bacc/jev-sheets">Source</a>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jev for Sheets</title>
+  <meta name="description" content="Classify, tag and score spreadsheet text with plain-language questions in Google Sheets, powered by TypeSafe's Jev model." />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <img src="icon.svg" alt="" />
+      <h1>Jev for Sheets</h1>
+    </div>
+    <p class="tagline">Ask plain-language questions about your spreadsheet text and get typed answers (TRUE/FALSE, a category, or a score), each with a confidence.</p>
+  </header>
+
+  <main>
+    <h2>What it does</h2>
+    <p>Jev for Sheets adds four formulas to Google Sheets. They send the text in your cells to <a href="https://typesafe.ai">TypeSafe</a>'s Jev model, which answers in about a tenth of a second per row.</p>
+    <table>
+      <tr><th>Formula</th><th>Returns</th></tr>
+      <tr><td><code>=JEV_IF(A2, "Is this a complaint?")</code></td><td>TRUE or FALSE</td></tr>
+      <tr><td><code>=JEV_PROB(A2, "Is this a complaint?")</code></td><td>Probability of "yes", 0–1</td></tr>
+      <tr><td><code>=JEV_CHOICE(A2, "billing, technical, sales")</code></td><td>One of your options</td></tr>
+      <tr><td><code>=JEV_CHOICE(A2, D1:D5, "Which team?", 0.8)</code></td><td>An option, or <code>UNSURE</code> when Jev is less than 80% confident</td></tr>
+      <tr><td><code>=JEV_SCORE(A2, "How angry?", "calm, annoyed, furious")</code></td><td>1–3 (can land between levels)</td></tr>
+    </table>
+    <ul>
+      <li><strong>Whole columns at once:</strong> <code>=JEV_IF(A2:A500, "…")</code> fills one answer per row.</li>
+      <li><strong>Several columns:</strong> <code>=JEV_IF(A2:C500, "…")</code> judges each row on all its cells together, e.g. product name, description and price.</li>
+      <li><strong>Knows when it's unsure:</strong> set a minimum confidence and uncertain rows say <code>UNSURE</code> instead of guessing, so you only check those by hand.</li>
+      <li><strong>No surprise re-billing:</strong> answers are cached for 6 hours, so recalculating the sheet is free.</li>
+    </ul>
+
+    <h2>Getting started</h2>
+    <ol>
+      <li>Install Jev for Sheets from the Google Workspace Marketplace. <span class="muted">(Listing coming soon; until then, see the <a href="https://github.com/Cab14bacc/jev-sheets#install-into-a-sheet">manual install</a>.)</span></li>
+      <li>Get an API key from <a href="https://console.typesafe.ai/keys">console.typesafe.ai</a>. You pay TypeSafe directly for usage, at launch pricing about $0.04 per million input tokens (a short cell costs a tiny fraction of a cent).</li>
+      <li>In your sheet, open <strong>Extensions → Jev for Sheets → Settings &amp; API key</strong>, paste the key, and click <strong>Save</strong>.</li>
+      <li>Click <strong>Insert example sheet</strong> to see every formula working, then use them on your own data.</li>
+    </ol>
+
+    <h2>Your data</h2>
+    <p class="note">Only the cells you pass to a <code>JEV_</code> formula are sent, and only to TypeSafe's API, to get the answer. The add-on has no server of its own and collects no analytics. Your API key stays in Google's Apps Script storage. Details: <a href="privacy.html">privacy policy</a>.</p>
+
+    <h2>Tips</h2>
+    <ul>
+      <li>Ask one thing per question, and phrase it literally: "Does the customer ask for a refund?" works better than "Is this refund-y?".</li>
+      <li>Leave arithmetic, dates and counting to normal formulas. Jev judges meaning, not numbers.</li>
+      <li>Up to 1,000 cells per formula. Split larger ranges across several formulas.</li>
+    </ul>
+
+    <h2>Support</h2>
+    <p>Questions, bugs or ideas: <a href="https://github.com/Cab14bacc/jev-sheets/issues">open an issue on GitHub</a>. The source code is open (MIT).</p>
+  </main>
+
+  <footer>
+    <a href="privacy.html">Privacy</a>
+    <a href="terms.html">Terms</a>
+    <a href="https://github.com/Cab14bacc/jev-sheets">Source</a>
+    <p>Jev for Sheets is an independent project and is not affiliated with or endorsed by Google or TypeSafe AI. Google Sheets is a trademark of Google LLC.</p>
+  </footer>
+</body>
+</html>

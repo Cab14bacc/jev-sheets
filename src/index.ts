@@ -1,5 +1,6 @@
 // Bundled by esbuild into the global `JevSheets`; gs/functions.js exposes it to Sheets.
 import { DEFAULT_MODEL, buildHttpRequest, noul, parseHttpResponse, type HttpRequest } from "./core";
+import { EXAMPLES_SHEET_NAME, examplesSheet } from "./examples";
 import { jevChoice, jevIf, jevProb, jevScore, type CellInput, type SheetsEnv } from "./functions";
 
 const KEY_PROP = "TYPESAFE_API_KEY";
@@ -66,68 +67,124 @@ export const JEV_CHOICE = (text: CellInput, options: CellInput, question?: CellI
 export const JEV_SCORE = (text: CellInput, question: CellInput, levels: CellInput, minConfidence?: CellInput) =>
   jevScore(env, text, question as string, levels, minConfidence as number);
 
-// ------------------------------------------------------------ menu
+// ------------------------------------------------------------ add-on menu
 
+export const HOMEPAGE_URL = "https://cab14bacc.github.io/jev-sheets/";
+
+/**
+ * Runs on open in every mode. In AuthMode.NONE (add-on installed but not yet
+ * used in this file) only building the menu is allowed, which is all this does.
+ */
 export function onOpen() {
   SpreadsheetApp.getUi()
-    .createMenu("Jev")
-    .addItem("Set API key (just for me)", "jevSetUserKey")
-    .addItem("Set API key for this spreadsheet (visible to editors)", "jevSetDocumentKey")
-    .addItem("Test connection", "jevTestConnection")
+    .createAddonMenu()
+    .addItem("Settings & API key", "jevShowSidebar")
+    .addItem("Insert example sheet", "jevInsertExamples")
     .addSeparator()
     .addItem("Help", "jevHelp")
     .addToUi();
 }
 
-function promptForKey(): string | null {
-  const ui = SpreadsheetApp.getUi();
-  const res = ui.prompt(
-    "TypeSafe API key",
-    "Paste your key from console.typesafe.ai/keys. Leave empty to remove it.",
-    ui.ButtonSet.OK_CANCEL,
-  );
-  return res.getSelectedButton() === ui.Button.OK ? res.getResponseText().trim() : null;
+export function onInstall() {
+  onOpen();
 }
 
-function saveKey(props: GoogleAppsScript.Properties.Properties, where: string) {
-  const key = promptForKey();
-  if (key === null) return;
-  if (key) props.setProperty(KEY_PROP, key);
-  else props.deleteProperty(KEY_PROP);
-  SpreadsheetApp.getActive().toast(key ? `API key saved ${where}.` : `API key removed ${where}.`, "Jev");
+export function showSidebar() {
+  const html = HtmlService.createHtmlOutputFromFile("Sidebar").setTitle("Jev");
+  SpreadsheetApp.getUi().showSidebar(html);
 }
 
-export function jevSetUserKey() {
-  saveKey(PropertiesService.getUserProperties(), "for you");
+// ------------------------------------------------------------ sidebar RPCs
+// Called from Sidebar.html via google.script.run. The key itself never goes
+// back to the browser; status only reports its last 4 characters.
+
+export interface KeyStatus {
+  user: string | null;
+  document: string | null;
+  active: "user" | "document" | null;
+  model: string;
 }
 
-export function jevSetDocumentKey() {
-  saveKey(PropertiesService.getDocumentProperties(), "for this spreadsheet");
+type Where = "user" | "document";
+
+function store(where: Where): GoogleAppsScript.Properties.Properties {
+  return where === "user" ? PropertiesService.getUserProperties() : PropertiesService.getDocumentProperties();
 }
 
-export function jevTestConnection() {
-  const ui = SpreadsheetApp.getUi();
+const mask = (key: string | null) => (key ? `••••${key.slice(-4)}` : null);
+
+export function sidebarStatus(): KeyStatus {
+  const user = PropertiesService.getUserProperties().getProperty(KEY_PROP);
+  const document = PropertiesService.getDocumentProperties().getProperty(KEY_PROP);
+  return {
+    user: mask(user),
+    document: mask(document),
+    active: user ? "user" : document ? "document" : null,
+    model: env.getModel(),
+  };
+}
+
+export function sidebarSaveKey(key: string, where: Where): KeyStatus {
+  const trimmed = String(key ?? "").trim();
+  if (!trimmed) throw new Error("Paste a key first.");
+  if (/\s/.test(trimmed) || trimmed.length > 500) throw new Error("That doesn't look like an API key.");
+  store(where).setProperty(KEY_PROP, trimmed);
+  return sidebarStatus();
+}
+
+export function sidebarRemoveKey(where: Where): KeyStatus {
+  store(where).deleteProperty(KEY_PROP);
+  return sidebarStatus();
+}
+
+export function sidebarTest(): { ok: boolean; message: string } {
   try {
     const req = buildHttpRequest(env.getApiKey() ?? "", {
       state: "Help! My payouts have been failing for 3 days.",
       model: env.getModel(),
       questions: { is_urgent: noul("Does this convey urgency?") },
     });
+    const started = Date.now();
     const [res] = env.fetchAll([req]);
     const parsed = parseHttpResponse(res.status, res.body, ["is_urgent"]);
     const a = parsed.answers.is_urgent;
-    ui.alert(
-      "Jev is working",
-      `Model: ${parsed.model}\nSample answer (should be near 1): ${a.type === "noul" ? a.noul : "?"}`,
-      ui.ButtonSet.OK,
-    );
+    const p = a.type === "noul" ? a.noul.toFixed(2) : "?";
+    return { ok: true, message: `Connected to ${parsed.model} in ${Date.now() - started} ms (test answer ${p}, expected near 1).` };
   } catch (e) {
-    ui.alert("Jev connection failed", (e as Error).message, ui.ButtonSet.OK);
+    return { ok: false, message: (e as Error).message };
   }
 }
 
-export function jevHelp() {
-  SpreadsheetApp.getUi().alert(
+// ------------------------------------------------------------ examples & help
+
+export function insertExamples() {
+  const ss = SpreadsheetApp.getActive();
+  let sheet = ss.getSheetByName(EXAMPLES_SHEET_NAME);
+  if (sheet) {
+    ss.setActiveSheet(sheet);
+    ss.toast("The example sheet already exists.", "Jev");
+    return;
+  }
+  const { values, formulas, notes } = examplesSheet();
+  sheet = ss.insertSheet(EXAMPLES_SHEET_NAME);
+  sheet.getRange(1, 1, values.length, values[0].length).setValues(values);
+  sheet.getRange(1, 1, 1, notes[0].length).setNotes(notes);
+  for (const { cell, formula } of formulas) sheet.getRange(cell).setFormula(formula);
+  sheet.getRange(1, 1, 1, values[0].length).setFontWeight("bold").setBackground("#f1f3f4");
+  sheet.setFrozenRows(1);
+  sheet.setColumnWidth(1, 420);
+  sheet.setColumnWidth(2, 160);
+  sheet.autoResizeColumns(3, values[0].length - 2);
+  ss.setActiveSheet(sheet);
+  if (!env.getApiKey()) {
+    ss.toast("Add your API key in Extensions → Jev → Settings to fill in the results.", "Jev", 8);
+    showSidebar();
+  }
+}
+
+export function help() {
+  const ui = SpreadsheetApp.getUi();
+  ui.alert(
     "Jev functions",
     [
       '=JEV_IF(A2, "Is this a complaint?")  → TRUE/FALSE',
@@ -136,10 +193,12 @@ export function jevHelp() {
       '=JEV_CHOICE(A2, D1:D5, "Which team?", 0.6)  → option, or UNSURE below 0.6 confidence',
       '=JEV_SCORE(A2, "How angry?", "calm, annoyed, furious")  → 1–3',
       "",
-      "Pass a whole column (A2:A500) instead of one cell to fill results down.",
+      "Pass a whole column (A2:A500) to fill results down.",
       "Pass several columns (A2:C500) to judge each row on all its cells together.",
       "Answers are cached for 6 hours, so recalculation doesn't re-bill.",
+      "",
+      `More: ${HOMEPAGE_URL}`,
     ].join("\n"),
-    SpreadsheetApp.getUi().ButtonSet.OK,
+    ui.ButtonSet.OK,
   );
 }

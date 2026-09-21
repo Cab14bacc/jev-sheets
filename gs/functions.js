@@ -55,26 +55,42 @@ function JEV_SCORE(text, question, levels, min_confidence) {
   return JevSheets.JEV_SCORE(text, question, levels, min_confidence);
 }
 
-function onOpen() {
-  JevSheets.onOpen();
+// ---------------------------------------------------------------- triggers & menu
+
+function onOpen(e) {
+  JevSheets.onOpen(e);
 }
 
-function onInstall() {
-  JevSheets.onOpen();
+function onInstall(e) {
+  JevSheets.onInstall(e);
 }
 
-function jevSetUserKey() {
-  JevSheets.jevSetUserKey();
+function jevShowSidebar() {
+  JevSheets.showSidebar();
 }
 
-function jevSetDocumentKey() {
-  JevSheets.jevSetDocumentKey();
-}
-
-function jevTestConnection() {
-  JevSheets.jevTestConnection();
+function jevInsertExamples() {
+  JevSheets.insertExamples();
 }
 
 function jevHelp() {
-  JevSheets.jevHelp();
+  JevSheets.help();
+}
+
+// ---------------------------------------------------------------- sidebar RPCs (google.script.run)
+
+function jevSidebarStatus() {
+  return JevSheets.sidebarStatus();
+}
+
+function jevSidebarSaveKey(key, where) {
+  return JevSheets.sidebarSaveKey(key, where);
+}
+
+function jevSidebarRemoveKey(where) {
+  return JevSheets.sidebarRemoveKey(where);
+}
+
+function jevSidebarTest() {
+  return JevSheets.sidebarTest();
 }

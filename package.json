@@ -10,9 +10,12 @@
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json",
     "push": "npm run build && clasp push",
-    "try": "node scripts/try.mjs"
+    "try": "node scripts/try.mjs",
+    "assets": "node scripts/render-assets.mjs"
   },
   "devDependencies": {
+    "@google/clasp": "^3.4.1",
+    "@resvg/resvg-js": "^2.6.2",
     "@types/google-apps-script": "^2.0.13",
     "esbuild": "^0.28.2",
     "typescript": "^5.9.0",
