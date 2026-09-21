@@ -30,6 +30,10 @@ Classify, tag and score text in Google Sheets by asking plain-language questions
 
 You need your own TypeSafe API key from [console.typesafe.ai](https://console.typesafe.ai/keys).
 
+
+https://github.com/user-attachments/assets/1fd55d96-4155-4ebc-8410-5dcd8ec0a531
+
+
 ## Install
 
 There are three ways to install, depending on who you are:
