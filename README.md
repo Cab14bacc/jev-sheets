@@ -93,7 +93,7 @@ TYPESAFE_API_KEY=... npm run try   # live call against the real API
 
 - `src/examples.ts`: contents of the "Jev examples" tab.
 - `gs/Sidebar.html`: the settings sidebar (it talks to the `jevSidebar*` functions via `google.script.run`).
-- `docs/`: the GitHub Pages site (homepage, privacy policy, terms), which the Marketplace listing needs. `npm run assets` renders the listing icons and banner from `docs/icon.svg` into `assets/`.
+- `docs/`: the GitHub Pages site (homepage, privacy policy, terms), which the Marketplace listing needs. `npm run assets` renders the listing icons, banner and site icon from the logo in `assets/logo-source.png`.
 - `src/functions.ts`: the formula logic. Apps Script services are injected through `SheetsEnv`, so it all runs in Node.
 - `src/index.ts`: the Apps Script glue (UrlFetchApp, CacheService, properties, menu). It is bundled into the global `JevSheets`.
 - `gs/functions.js`: the top-level functions Sheets discovers, with the `@customfunction` docs shown in autocomplete.
