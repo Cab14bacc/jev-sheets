@@ -25,10 +25,11 @@
       <tr><th>Formula</th><th>Returns</th></tr>
       <tr><td><code>=JEV_IF(A2, "Is this a complaint?")</code></td><td>TRUE or FALSE</td></tr>
       <tr><td><code>=JEV_PROB(A2, "Is this a complaint?")</code></td><td>Probability of "yes", 0–1</td></tr>
-      <tr><td><code>=JEV_CHOICE(A2, "billing, technical, sales")</code></td><td>One of your options</td></tr>
+      <tr><td><code>=JEV_CHOICE(A2, "billing, technical, sales")</code></td><td>One of your options (2–255)</td></tr>
       <tr><td><code>=JEV_CHOICE(A2, D1:D5, "Which team?", 0.8)</code></td><td>An option, or <code>UNSURE</code> when Jev is less than 80% confident</td></tr>
-      <tr><td><code>=JEV_SCORE(A2, "How angry?", "calm, annoyed, furious")</code></td><td>1–3 (can land between levels)</td></tr>
+      <tr><td><code>=JEV_SCORE(A2, "How urgent?", "not urgent, low, medium, high, critical")</code></td><td>1 to the number of levels (2–10 levels, lowest first); can land between levels, e.g. 2.4</td></tr>
     </table>
+    <p class="muted">Options and levels can be typed as a comma-separated list or taken from a range of cells.</p>
     <ul>
       <li><strong>Whole columns at once:</strong> <code>=JEV_IF(A2:A500, "…")</code> fills one answer per row.</li>
       <li><strong>Several columns:</strong> <code>=JEV_IF(A2:C500, "…")</code> judges each row on all its cells together, e.g. product name, description and price.</li>

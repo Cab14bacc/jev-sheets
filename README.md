@@ -1,14 +1,25 @@
 # Jev for Google Sheets
 
-Ask typed questions about your spreadsheet cells with [TypeSafe](https://typesafe.ai)'s Jev model. Jev answers in about 100 ms per row and returns a confidence with every answer, so you can have the sheet say `UNSURE` when Jev isn't sure.
+Classify, tag and score text in Google Sheets by asking plain-language questions in a formula. Answers come from [TypeSafe](https://typesafe.ai)'s Jev model in about a tenth of a second per row, as a real value your sheet can use: TRUE/FALSE, one of your categories, or a number. Every answer carries a confidence, so uncertain rows can say `UNSURE` instead of guessing.
 
-| Formula | Returns |
-|---|---|
-| `=JEV_IF(A2, "Is this a complaint?")` | TRUE / FALSE (optional 3rd arg: threshold, default 0.5) |
-| `=JEV_PROB(A2, "Is this a complaint?")` | probability of "yes", 0–1 |
-| `=JEV_CHOICE(A2, "billing, technical, sales")` | one option (options can also be a range) |
-| `=JEV_CHOICE(A2, D1:D5, "Which team?", 0.6)` | option, or `UNSURE` when confidence < 0.6 |
-| `=JEV_SCORE(A2, "How angry?", "calm, annoyed, furious")` | 1–3 (can land between levels) |
+## Formulas
+
+| Formula | Asks | Returns |
+|---|---|---|
+| `JEV_IF(text, question, [threshold])` | a yes/no question | TRUE or FALSE. TRUE when the probability of "yes" is at least `threshold` (default 0.5). |
+| `JEV_PROB(text, question)` | a yes/no question | The probability of "yes", from 0 to 1. |
+| `JEV_CHOICE(text, options, [question], [min_confidence])` | which option fits | One of your options (2–255), or `UNSURE` when confidence is below `min_confidence`. |
+| `JEV_SCORE(text, question, levels, [min_confidence])` | where the text falls on your scale | A number from 1 (first level) to N (last level), with 2–10 levels. It can land between levels (e.g. 2.4), or return `UNSURE` below `min_confidence`. |
+
+`options` and `levels` can be a comma-separated string (`"billing, technical, sales"`) or a range of cells (`D1:D5`). List `levels` from lowest to highest.
+
+```text
+=JEV_IF(A2, "Is this a complaint?")
+=JEV_PROB(A2, "Is this a complaint?")
+=JEV_CHOICE(A2, "billing, technical, sales")
+=JEV_CHOICE(A2, D1:D5, "Which team should handle this?", 0.6)
+=JEV_SCORE(A2, "How urgent is this?", "not urgent, low, medium, high, critical")
+```
 
 - **Whole columns:** `=JEV_IF(A2:A500, "…")` fills one answer per cell. Requests run in parallel batches, with automatic retry when rate-limited.
 - **Several columns:** `=JEV_IF(A2:C500, "…")` judges each **row** as one item, reading all its cells together (e.g. product name + description + price).
