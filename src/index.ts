@@ -177,7 +177,7 @@ export function insertExamples() {
   sheet.autoResizeColumns(3, values[0].length - 2);
   ss.setActiveSheet(sheet);
   if (!env.getApiKey()) {
-    ss.toast("Add your API key in Extensions → Jev → Settings to fill in the results.", "Jev", 8);
+    ss.toast("Add your API key in the sidebar to fill in the results.", "Jev", 8);
     showSidebar();
   }
 }

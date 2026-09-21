@@ -5,3 +5,4 @@ dist/
 # Holds your Apps Script project ID; copy from .clasp.json.example
 .clasp.json
 .clasprc.json
+.clasp.sheet.json

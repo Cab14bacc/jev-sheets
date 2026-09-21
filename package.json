@@ -11,7 +11,8 @@
     "typecheck": "tsc -p tsconfig.json",
     "push": "npm run build && clasp push",
     "try": "node scripts/try.mjs",
-    "assets": "node scripts/render-assets.mjs"
+    "assets": "node scripts/render-assets.mjs",
+    "push:sheet": "npm run build && clasp push -P .clasp.sheet.json"
   },
   "devDependencies": {
     "@google/clasp": "^3.4.1",

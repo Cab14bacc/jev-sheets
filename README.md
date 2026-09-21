@@ -59,15 +59,16 @@ Then upload `dist/` to Apps Script in **one** of two ways:
 
 In the Apps Script editor:
 
-1. ⚙️ **Project Settings** → tick **Show "appsscript.json" manifest file in editor**. Back in the editor, replace the contents of `appsscript.json` with `appsscript.json`.
-2. Rename `Code.gs` to `functions.gs` and replace its contents with `functions.js`.
-3. **+ → Script**, name it `jev`, and paste in `jev.js`.
-4. **+ → HTML**, name it `Sidebar` (exactly), and paste in `Sidebar.html`.
-5. Save.
+1. Click the project name at the top ("Untitled project") and rename it **Jev for Sheets**. This becomes the menu name under Extensions.
+2. ⚙️ **Project Settings** → tick **Show "appsscript.json" manifest file in editor**. Back in the editor, replace everything in the editor's `appsscript.json` with the contents of the downloaded `appsscript.json`.
+3. Rename `Code.gs` to `functions.gs` and replace its contents with `functions.js`.
+4. **+ → Script**, name it `jev`, and paste in `jev.js`.
+5. **+ → HTML**, name it `Sidebar` (exactly), and paste in `Sidebar.html`.
+6. Save (Ctrl+S).
 
 ### First run
 
-1. Reload the spreadsheet. A menu appears under **Extensions**. If you pasted the files by hand, the menu is named after your Apps Script project.
+1. Reload the spreadsheet. A **Jev for Sheets** menu appears under **Extensions** (for a manual install, it's named after your Apps Script project).
 2. Open **Settings & API key**. The first time, Google asks for permission. For a copy you pasted in yourself it warns "Google hasn't verified this app": choose **Advanced → Go to … (unsafe) → Allow**. It's your own script.
 3. Paste your TypeSafe API key and click **Save key**. It tests the connection automatically.
 4. Optional: **Insert example sheet** adds a tab with every formula already working.
@@ -93,7 +94,6 @@ TYPESAFE_API_KEY=... npm run try   # live call against the real API
 - `src/examples.ts`: contents of the "Jev examples" tab.
 - `gs/Sidebar.html`: the settings sidebar (it talks to the `jevSidebar*` functions via `google.script.run`).
 - `docs/`: the GitHub Pages site (homepage, privacy policy, terms), which the Marketplace listing needs. `npm run assets` renders the listing icons and banner from `docs/icon.svg` into `assets/`.
-- Publishing to the Marketplace: see [PUBLISHING.md](PUBLISHING.md).
 - `src/functions.ts`: the formula logic. Apps Script services are injected through `SheetsEnv`, so it all runs in Node.
 - `src/index.ts`: the Apps Script glue (UrlFetchApp, CacheService, properties, menu). It is bundled into the global `JevSheets`.
 - `gs/functions.js`: the top-level functions Sheets discovers, with the `@customfunction` docs shown in autocomplete.

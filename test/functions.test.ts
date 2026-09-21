@@ -118,7 +118,7 @@ describe("JEV_IF / JEV_PROB", () => {
 
   it("explains how to set a missing key", () => {
     const { env } = fakeEnv(() => noulReply(1), null);
-    expect(() => jevIf(env, "a", "q?")).toThrow(/Set API key/);
+    expect(() => jevIf(env, "a", "q?")).toThrow(/Settings & API key/);
   });
 
   it("rejects oversized ranges before calling the API", () => {

@@ -131,7 +131,7 @@ function evaluateCells(
   const { items, isRange } = toItems(input);
 
   const apiKey = env.getApiKey();
-  if (!apiKey) throw new Error("No TypeSafe API key. Use the menu: Jev → Set API key.");
+  if (!apiKey) throw new Error("No TypeSafe API key. Add one in Extensions → (this add-on) → Settings & API key.");
   const model = env.getModel();
   const questionJson = JSON.stringify(question);
 
