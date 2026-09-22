@@ -69,7 +69,7 @@ export const JEV_SCORE = (text: CellInput, question: CellInput, levels: CellInpu
 
 // ------------------------------------------------------------ add-on menu
 
-export const HOMEPAGE_URL = "https://cab14bacc.github.io/jev-sheets/";
+export const HOMEPAGE_URL = "https://jevsheets.link/";
 
 /**
  * Runs on open in every mode. In AuthMode.NONE (add-on installed but not yet
@@ -191,7 +191,7 @@ export function help() {
       '=JEV_PROB(A2, "Is this a complaint?")  → 0–1',
       '=JEV_CHOICE(A2, "billing, technical, sales")  → one option',
       '=JEV_CHOICE(A2, D1:D5, "Which team?", 0.6)  → option, or UNSURE below 0.6 confidence',
-      '=JEV_SCORE(A2, "How angry?", "calm, annoyed, furious")  → 1–3',
+      '=JEV_SCORE(A2, "How urgent?", "low, medium, high, critical")  → 1–4 (2–10 levels, lowest first)',
       "",
       "Pass a whole column (A2:A500) to fill results down.",
       "Pass several columns (A2:C500) to judge each row on all its cells together.",
